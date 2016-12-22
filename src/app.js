@@ -1,22 +1,18 @@
-import {Todo} from './todo';
+import {WebAPI} from './web-api';
 
 export class App {
-	constructor() {
-		this.heading = "Todo List";
-		this.todos = [];
-		this.pendingTodo = '';
-	}
+    static inject() { return [WebAPI]; }
 
-	addTodo() {
-		if (this.pendingTodo) {
-			this.todos.push(new Todo(this.pendingTodo));
-			this.pendingTodo = '';
-		}
-	}
+    constructor(api) {
+        this.api = api;
+    }
 
-	removeTodo(todo) {
-		let index = this.todos.indexOf(todo);
-		if (-1 !== index)
-			this.todos.splice(index, 1);
-	}
+    configureRouter(config, router) {
+        config.title = 'Contacts';
+        config.map([
+            {route: '', moduleId: 'no-selection', title: 'Select'},
+            {route: 'contacts/:id', moduleId: 'contact-detail', name: 'contacts'}
+        ]);
+        this.router = router;
+    }
 }
