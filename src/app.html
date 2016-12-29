@@ -2,20 +2,27 @@
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="./styles.css"></require>
 
-  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation"><div class="container-fluid">
     <div class="navbar-header">
-      <div class="navbar-brand">
-        <i class="fa fa-user"></i>
-        <span>Pluto</span>
-        <span class="username"> - ${username}</span>
+        <div class="navbar-brand">
+          <span>Pluto</span>
+        </div>
       </div>
+
       <ul class="nav navbar-nav">
         <li class.bind="currentRoute === 'avatarBuilder' ? 'active' : ''"><a route-href="route: avatarBuilder">Avatar Builder</a></li>
         <li class.bind="currentRoute === 'settings' ? 'active' : ''"><a route-href="route: settings">Settings</a></li>
         <li class.bind="currentRoute === 'friendList' ? 'active' : ''"><a route-href="route: friendList">Friends</a></li>
       </ul>
-    </div>
-  </nav>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><span class="navbar-text">${username}</span></li>
+        <li><a class="btn btn-default">Logout</a></li>
+        <li><a class="btn btn-danger">
+          <span class="glyphicon glyphicon-off"></span>
+        </a></li>
+      </ul>
+  </div></nav>
 
   <loading-indicator loading.bind="router.isNavigating"></loading-indicator>
 
