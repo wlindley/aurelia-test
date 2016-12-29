@@ -50,3 +50,39 @@ li.list-group-item > a {
 li.list-group-item.active > a {
   color: white;
 }
+
+.settings-panel {
+  background-color: #aaa
+}
+
+.settings-panel-btn {
+  margin: 5px;
+}
+
+.avatar-piece {
+  margin-bottom: 35px;
+}
+
+.centered {
+  text-align: center;
+}
+
+.friend-card {
+  margin-bottom: 60px;
+}
+
+.friend-name {
+  font-weight: bold;
+}
+
+.friend-status {
+  font-style: italic;
+  color: #aaa;
+}
+
+.call-button {
+  margin-top: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: limegreen;
+}

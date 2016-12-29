@@ -1,0 +1,27 @@
+<template>
+    <div class="friend-card col-sm-3 ${isVisible ? '' : 'hidden'}">
+        <div class="row">
+            <div class="col-xs-12 text-center"><span class="friend-name">${displayName}</span></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-center"><span class="friend-status">${status}</span></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12"><img class="img center-block" src="${profileImage}"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-4">
+                <button class="btn center-block call-button">
+                    <span class="glyphicon glyphicon-earphone"></span>
+                </button>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn center-block call-button">
+                    <span class="glyphicon glyphicon-facetime-video"></span>
+                </button>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+    </div>
+</template>

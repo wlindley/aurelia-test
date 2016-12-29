@@ -1,23 +1,27 @@
 <template>
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="./styles.css"></require>
-  <require from="./contact-list"></require>
 
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">
+      <div class="navbar-brand">
         <i class="fa fa-user"></i>
-        <span>Contacts</span>
-      </a>
+        <span>Pluto</span>
+        <span class="username"> - ${username}</span>
+      </div>
+      <ul class="nav navbar-nav">
+        <li class.bind="currentState === 'avatarBuilder' ? 'active' : ''"><a route-href="route: avatarBuilder" click.delegate="changeState('avatarBuilder')">Avatar Builder</a></li>
+        <li class.bind="currentState === 'settings' ? 'active' : ''"><a route-href="route: settings" click.delegate="changeState('settings')">Settings</a></li>
+        <li class.bind="currentState === 'friendList' ? 'active' : ''"><a route-href="route: friendList" click.delegate="changeState('friendList')">Friends</a></li>
+      </ul>
     </div>
   </nav>
 
-  <loading-indicator loading.bind="router.isNavigating || api.isRequesting"></loading-indicator>
+  <loading-indicator loading.bind="router.isNavigating"></loading-indicator>
 
   <div class="container">
     <div class="row">
-      <contact-list class="col-md-4"></contact-list>
-      <router-view class="col-md-8"></router-view>
+      <router-view class="col-xs-12"></router-view>
     </div>
   </div>
 </template>

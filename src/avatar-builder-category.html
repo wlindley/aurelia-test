@@ -1,0 +1,28 @@
+<template>
+    <div class="row"><h3 class="centered">${title}</h3></div>
+    <div class="row">
+        <div class="col-xs-2 text-center">
+            <a route-href="route: avatarBuilderCategory; params.bind: {id: prevCategory}">
+                <button class="btn centered">&lt;</button>
+            </a>
+        </div>
+
+        <div class="col-xs-8">
+            <div class="container-fluid">
+                <div class="row">
+                    <div repeat.for="item of items" class="col-xs-3 avatar-piece">
+                        <a class="text-center">
+                            <img class="img center-block" src="${item.imageUrl}">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-2 text-center">
+            <a route-href="route: avatarBuilderCategory; params.bind: {id: nextCategory}">
+                <button class="btn centered">&gt;</button>
+            </a>
+        </div>
+    </div>
+</template>

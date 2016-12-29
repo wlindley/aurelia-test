@@ -124,7 +124,8 @@
             "deps": ["jquery"],
             "exports": "$",
             "resources": [
-              "css/bootstrap.css"
+              "css/bootstrap.css",
+              "fonts/*"
             ]
           },
           {

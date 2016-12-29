@@ -1,0 +1,24 @@
+<template>
+    <h2>Friends</h2>
+    <div class="panel">
+        <div class="row"><h3>Available</h3></div>
+        <div class="row">
+            <div class="friend-list container-fluid">
+                <div repeat.for="friend of friends">
+                    <friend-card user-id.bind="friend.id" display-name.bind="friend.name" status.bind="friend.status" profile-image.bind="friend.profileImage" show-friends="available"></friend-card>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="row"><h3>Offline</h3></div>
+        <div class="row">
+            <div class="friend-list container-fluid">
+                <div repeat.for="friend of friends">
+                    <friend-card user-id.bind="friend.id" display-name.bind="friend.name" status.bind="friend.status" profile-image.bind="friend.profileImage" show-friends="unavailable"></friend-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
