@@ -2,8 +2,8 @@
     <div class="row"><h3 class="centered">${title}</h3></div>
     <div class="row">
         <div class="col-xs-2 text-center">
-            <a route-href="route: avatarBuilderCategory; params.bind: {id: prevCategory}">
-                <button class="btn center-block">&lt;</button>
+            <a class="btn btn-default center-block" route-href="route: avatarBuilderCategory; params.bind: {id: prevCategory}">
+                <span class="glyphicon glyphicon-chevron-left"></span>
             </a>
         </div>
 
@@ -20,8 +20,8 @@
         </div>
 
         <div class="col-xs-2 text-center">
-            <a route-href="route: avatarBuilderCategory; params.bind: {id: nextCategory}">
-                <button class="btn center-block">&gt;</button>
+            <a class="btn btn-default center-block" route-href="route: avatarBuilderCategory; params.bind: {id: nextCategory}">
+                <span class="glyphicon glyphicon-chevron-right"></span>
             </a>
         </div>
     </div>
