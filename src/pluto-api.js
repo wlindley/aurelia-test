@@ -50,7 +50,7 @@ export class PlutoAPI {
         this.ea = null;
         this.avatarBuilderCategorySizes = [];
         for (let i = 0; i < this.avatarBuilderCategories.length; i++) {
-            this.avatarBuilderCategorySizes.push(Math.floor((Math.random() * 5) + 8));
+            this.avatarBuilderCategorySizes.push(Math.floor((Math.random() * 10) + 15));
         }
     }
 
