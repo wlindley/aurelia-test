@@ -1,17 +1,30 @@
 <template>
     <h1>Settings</h1>
-    <div class="row">
-        <div class="panel settings-panel col-sm-12">
-            <h2>Audio</h2>
-            <div class="row"><button class="btn settings-panel-btn">Select Microphone</button></div>
-            <div class="row"><button class="btn settings-panel-btn">Select Speaker</button></div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Audio</h2>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <button class="btn btn-default settings-panel-btn">Select Microphone</button>
+            </div>
+            <div class="row">
+                <button class="btn btn-default settings-panel-btn">Select Speaker</button>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="panel settings-panel col-sm-12">
-            <h2>General</h2>
-            <div class="checkbox">
-                <label><input type="checkbox" value="" id="share-app-context">Share what I'm doing with others</label>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">General</h2>
+        </div>
+        <div class="panel-body">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <input type="checkbox" id="share-app-status">
+                </span>
+                <label class="form-control" for="share-app-status">Share what I'm doing with others</label>
             </div>
         </div>
     </div>

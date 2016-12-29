@@ -14,4 +14,8 @@ export let FriendCard = decorators(
         else
             return 'offline' !== this.status;
     }
+
+    get areButtonsVisible() {
+        return 'offline' !== this.status;
+    }
 });

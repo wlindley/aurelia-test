@@ -51,12 +51,9 @@ li.list-group-item.active > a {
   color: white;
 }
 
-.settings-panel {
-  background-color: #aaa
-}
-
 .settings-panel-btn {
   margin: 5px;
+  margin-left: 15px;
 }
 
 .avatar-piece {
@@ -84,5 +81,4 @@ li.list-group-item.active > a {
   margin-top: 10px;
   padding-left: 20px;
   padding-right: 20px;
-  background-color: limegreen;
 }
