@@ -1,0 +1,44 @@
+<template>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Audio</h2>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <span class="form-control"><span class="option-title">Speaker:</span> ${speakerName}</span>
+                        <span class="input-group-btn">
+                            <a route-href="route:speakerSetup" class="btn btn-default">Setup...</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row vertical-spacer"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <span class="form-control"><span class="option-title">Microphone:</span> ${microphoneName}</span>
+                        <span class="input-group-btn">
+                            <a route-href="route:microphoneSetup" class="btn btn-default">Setup...</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">General</h2>
+        </div>
+        <div class="panel-body">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <input type="checkbox" id="share-app-status">
+                </span>
+                <label class="form-control" for="share-app-status">Share what I'm doing with others</label>
+            </div>
+        </div>
+    </div>
+</template>

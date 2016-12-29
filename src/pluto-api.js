@@ -100,4 +100,16 @@ export class PlutoAPI {
             }, 250);
         });
     }
+
+    getAudioConfig() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                let result = {
+                    speaker: "Bluetooth audio device 4",
+                    microphone: "Default recording device"
+                };
+                resolve(result);
+            }, 50);
+        });
+    }
 }

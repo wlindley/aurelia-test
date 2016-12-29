@@ -65,7 +65,7 @@ li.list-group-item.active > a {
 }
 
 .friend-card {
-  margin-bottom: 60px;
+  margin-bottom: 5%;
 }
 
 .friend-name {
@@ -77,8 +77,14 @@ li.list-group-item.active > a {
   color: #aaa;
 }
 
-.call-button {
-  margin-top: 10px;
-  padding-left: 20px;
-  padding-right: 20px;
+.call-buttons {
+  margin-top: 5px;
+}
+
+.option-title {
+  font-weight: bold;
+}
+
+.vertical-spacer {
+  padding-bottom: 10px;
 }

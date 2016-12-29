@@ -1,0 +1,24 @@
+<template>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">Speaker Setup</h2>
+        </div>
+        <div class="panel-body">
+            <div class="row"><div class="col-xs-12">
+                Please listen to the headphones you intend to use and ensure you can hear audio coming from the left and right ears.
+            </div></div>
+            <div class="row"><div class="col-xs-12">
+                <h4>${speakerName}</h4>
+            </div></div>
+            <div class="row"><div class="col-xs-12">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: ${playPercent}%"></div>
+                </div>
+            </div></div>
+            <div class="row"><div class="col-xs-12">
+                <a class="btn btn-primary" route-href="route: main">Use this audio device</a>
+                <a class="btn btn-default" route-href="route: main">Try next audio device</a>
+            </div></div>
+        </div>
+    </div>
+</template>

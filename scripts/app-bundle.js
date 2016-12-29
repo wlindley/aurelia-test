@@ -188,147 +188,6 @@ define('avatar-builder',['exports', './pluto-api'], function (exports, _plutoApi
         return AvatarBuilder;
     }();
 });
-define('contact-detail',['exports', 'aurelia-event-aggregator', './web-api', './utility', './messages'], function (exports, _aureliaEventAggregator, _webApi, _utility, _messages) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.ContactDetail = undefined;
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
-
-    var ContactDetail = exports.ContactDetail = function () {
-        ContactDetail.inject = function inject() {
-            return [_webApi.WebAPI, _aureliaEventAggregator.EventAggregator];
-        };
-
-        function ContactDetail(api, ea) {
-            _classCallCheck(this, ContactDetail);
-
-            this.api = api;
-            this.ea = ea;
-        }
-
-        ContactDetail.prototype.activate = function activate(params, routeConfig) {
-            var _this = this;
-
-            this.routeConfig = routeConfig;
-
-            return this.api.getContactDetails(params.id).then(function (contact) {
-                _this.contact = contact;
-                _this.routeConfig.navModel.setTitle(contact.firstName);
-                _this.originalContact = JSON.parse(JSON.stringify(contact));
-                _this.ea.publish(new _messages.ContactViewed(_this.contact));
-            });
-        };
-
-        ContactDetail.prototype.save = function save() {
-            var _this2 = this;
-
-            this.api.saveContact(this.contact).then(function (contact) {
-                _this2.contact = contact;
-                _this2.routeConfig.navModel.setTitle(contact.firstName);
-                _this2.originalContact = JSON.parse(JSON.stringify(contact));
-                _this2.ea.publish(new _messages.ContactUpdated(_this2.contact));
-            });
-        };
-
-        ContactDetail.prototype.canDeactivate = function canDeactivate() {
-            if (!(0, _utility.areEqual)(this.originalContact, this.contact)) {
-                var result = confirm('You have unsaved changes. Are you sure you wish to leave?');
-                if (!result) this.ea.publish(new _messages.ContactViewed(this.contact));
-                return result;
-            }
-            return true;
-        };
-
-        _createClass(ContactDetail, [{
-            key: 'canSave',
-            get: function get() {
-                return this.contact.firstName && this.contact.lastName && !this.api.isRequesting;
-            }
-        }]);
-
-        return ContactDetail;
-    }();
-});
-define('contact-list',['exports', './web-api', 'aurelia-event-aggregator', './messages'], function (exports, _webApi, _aureliaEventAggregator, _messages) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.ContactList = undefined;
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var ContactList = exports.ContactList = function () {
-        ContactList.inject = function inject() {
-            return [_webApi.WebAPI, _aureliaEventAggregator.EventAggregator];
-        };
-
-        function ContactList(api, ea) {
-            var _this = this;
-
-            _classCallCheck(this, ContactList);
-
-            this.api = api;
-            this.contacts = [];
-            ea.subscribe(_messages.ContactViewed, function (msg) {
-                return _this.select(msg.contact);
-            });
-            ea.subscribe(_messages.ContactUpdated, function (msg) {
-                var id = msg.contact.id;
-                var found = _this.contacts.find(function (x) {
-                    return x.id === id;
-                });
-                Object.assign(found, msg.contact);
-            });
-        }
-
-        ContactList.prototype.created = function created() {
-            var _this2 = this;
-
-            this.api.getContactList().then(function (contacts) {
-                return _this2.contacts = contacts;
-            });
-        };
-
-        ContactList.prototype.select = function select(contact) {
-            this.selectedId = contact.id;
-            return true;
-        };
-
-        return ContactList;
-    }();
-});
 define('environment',["exports"], function (exports) {
   "use strict";
 
@@ -641,6 +500,18 @@ define('pluto-api',["exports", "./messages"], function (exports, _messages) {
             });
         };
 
+        PlutoAPI.prototype.getAudioConfig = function getAudioConfig() {
+            return new Promise(function (resolve) {
+                setTimeout(function () {
+                    var result = {
+                        speaker: "Bluetooth audio device 4",
+                        microphone: "Default recording device"
+                    };
+                    resolve(result);
+                }, 50);
+            });
+        };
+
         _createClass(PlutoAPI, [{
             key: "avatarBuilderCategories",
             get: function get() {
@@ -651,8 +522,8 @@ define('pluto-api',["exports", "./messages"], function (exports, _messages) {
         return PlutoAPI;
     }();
 });
-define('settings',["exports"], function (exports) {
-    "use strict";
+define('settings',['exports'], function (exports) {
+    'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
@@ -672,6 +543,11 @@ define('settings',["exports"], function (exports) {
         function Settings() {
             _classCallCheck(this, Settings);
         }
+
+        Settings.prototype.configureRouter = function configureRouter(config, router) {
+            config.map([{ route: '', moduleId: 'settings/main', name: 'main' }, { route: 'speakerSetup', moduleId: 'settings/speaker-setup', name: 'speakerSetup' }, { route: 'microphoneSetup', moduleId: 'settings/microphone-setup', name: 'microphoneSetup' }]);
+            this.router = router;
+        };
 
         return Settings;
     }();
@@ -822,6 +698,91 @@ define('resources/index',['exports'], function (exports) {
     config.globalResources(['./elements/loading-indicator', './elements/friend-card']);
   }
 });
+define('settings/main',["exports", "../pluto-api"], function (exports, _plutoApi) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.SettingsMain = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var SettingsMain = exports.SettingsMain = function () {
+        SettingsMain.inject = function inject() {
+            return [_plutoApi.PlutoAPI];
+        };
+
+        function SettingsMain(api) {
+            _classCallCheck(this, SettingsMain);
+
+            this.api = api;
+            this.speakerName = "";
+            this.microphoneName = "";
+        }
+
+        SettingsMain.prototype.activate = function activate(params, routeConfig) {
+            var _this = this;
+
+            return this.api.getAudioConfig().then(function (config) {
+                _this.speakerName = config.speaker;
+                _this.microphoneName = config.microphone;
+            });
+        };
+
+        return SettingsMain;
+    }();
+});
+define('settings/speaker-setup',["exports", "../pluto-api"], function (exports, _plutoApi) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.SpeakerSetup = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var SpeakerSetup = exports.SpeakerSetup = function () {
+        SpeakerSetup.inject = function inject() {
+            return [_plutoApi.PlutoAPI];
+        };
+
+        function SpeakerSetup(api) {
+            _classCallCheck(this, SpeakerSetup);
+
+            this.api = api;
+            this.speakerName = "";
+            this.playPercent = 0;
+        }
+
+        SpeakerSetup.prototype.activate = function activate(params, routeConfig) {
+            var _this = this;
+
+            return this.api.getAudioConfig().then(function (config) {
+                _this.speakerName = config.speaker;
+                _this.updateHandle = setInterval(function () {
+                    return _this.update();
+                }, 50);
+            });
+        };
+
+        SpeakerSetup.prototype.update = function update() {
+            this.playPercent = Math.min(this.playPercent + 1, 100);
+            if (100 <= this.playPercent) clearInterval(this.updateHandle);
+        };
+
+        return SpeakerSetup;
+    }();
+});
 define('resources/elements/friend-card',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     'use strict';
 
@@ -923,14 +884,64 @@ define('resources/elements/loading-indicator',['exports', 'nprogress', 'aurelia-
         return _class;
     }());
 });
+define('settings/microphone-setup',["exports", "../pluto-api"], function (exports, _plutoApi) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.MicrophoneSetup = undefined;
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var MicrophoneSetup = exports.MicrophoneSetup = function () {
+        MicrophoneSetup.inject = function inject() {
+            return [_plutoApi.PlutoAPI];
+        };
+
+        function MicrophoneSetup(api) {
+            _classCallCheck(this, MicrophoneSetup);
+
+            this.api = api;
+            this.microphoneName = "";
+            this.volumePercent = 0;
+        }
+
+        MicrophoneSetup.prototype.activate = function activate(params, routeConfig) {
+            var _this = this;
+
+            return this.api.getAudioConfig().then(function (config) {
+                _this.microphoneName = config.microphone;
+                _this.updateHandle = setInterval(function () {
+                    return _this.update();
+                }, 100);
+            });
+        };
+
+        MicrophoneSetup.prototype.detached = function detached() {
+            clearInterval(this.updateHandle);
+        };
+
+        MicrophoneSetup.prototype.update = function update() {
+            this.volumePercent = Math.floor(Math.random() * 10) * 5 + 30;
+        };
+
+        return MicrophoneSetup;
+    }();
+});
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"./styles.css\"></require>\n\n  <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n    <div class=\"navbar-header\">\n      <div class=\"navbar-brand\">\n        <i class=\"fa fa-user\"></i>\n        <span>Pluto</span>\n        <span class=\"username\"> - ${username}</span>\n      </div>\n      <ul class=\"nav navbar-nav\">\n        <li class.bind=\"currentState === 'avatarBuilder' ? 'active' : ''\"><a route-href=\"route: avatarBuilder\" click.delegate=\"changeState('avatarBuilder')\">Avatar Builder</a></li>\n        <li class.bind=\"currentState === 'settings' ? 'active' : ''\"><a route-href=\"route: settings\" click.delegate=\"changeState('settings')\">Settings</a></li>\n        <li class.bind=\"currentState === 'friendList' ? 'active' : ''\"><a route-href=\"route: friendList\" click.delegate=\"changeState('friendList')\">Friends</a></li>\n      </ul>\n    </div>\n  </nav>\n\n  <loading-indicator loading.bind=\"router.isNavigating\"></loading-indicator>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <router-view class=\"col-xs-12\"></router-view>\n    </div>\n  </div>\n</template>\n"; });
-define('text!styles.css', ['module'], function(module) { module.exports = "body { padding-top: 70px; }\n\nsection {\n  margin: 0 20px;\n}\n\na:focus {\n  outline: none;\n}\n\n.navbar-nav li.loader {\n    margin: 12px 24px 0 6px;\n}\n\n.no-selection {\n  margin: 20px;\n}\n\n.contact-list {\n  overflow-y: auto;\n  border: 1px solid #ddd;\n  padding: 10px;\n}\n\n.panel {\n  margin: 20px;\n}\n\n.button-bar {\n  right: 0;\n  left: 0;\n  bottom: 0;\n  border-top: 1px solid #ddd;\n  background: white;\n}\n\n.button-bar > button {\n  float: right;\n  margin: 20px;\n}\n\nli.list-group-item {\n  list-style: none;\n}\n\nli.list-group-item > a {\n  text-decoration: none;\n}\n\nli.list-group-item.active > a {\n  color: white;\n}\n\n.settings-panel-btn {\n  margin: 5px;\n  margin-left: 15px;\n}\n\n.avatar-piece {\n  margin-bottom: 35px;\n}\n\n.centered {\n  text-align: center;\n}\n\n.friend-card {\n  margin-bottom: 60px;\n}\n\n.friend-name {\n  font-weight: bold;\n}\n\n.friend-status {\n  font-style: italic;\n  color: #aaa;\n}\n\n.call-button {\n  margin-top: 10px;\n  padding-left: 20px;\n  padding-right: 20px;\n}\n"; });
-define('text!avatar-builder-category.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"row\"><h3 class=\"centered\">${title}</h3></div>\n    <div class=\"row\">\n        <div class=\"col-xs-2 text-center\">\n            <a route-href=\"route: avatarBuilderCategory; params.bind: {id: prevCategory}\">\n                <button class=\"btn centered\">&lt;</button>\n            </a>\n        </div>\n\n        <div class=\"col-xs-8\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <div repeat.for=\"item of items\" class=\"col-xs-3 avatar-piece\">\n                        <a class=\"text-center\">\n                            <img class=\"img center-block\" src=\"${item.imageUrl}\">\n                        </a>\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"col-xs-2 text-center\">\n            <a route-href=\"route: avatarBuilderCategory; params.bind: {id: nextCategory}\">\n                <button class=\"btn centered\">&gt;</button>\n            </a>\n        </div>\n    </div>\n</template>"; });
+define('text!styles.css', ['module'], function(module) { module.exports = "body { padding-top: 70px; }\n\nsection {\n  margin: 0 20px;\n}\n\na:focus {\n  outline: none;\n}\n\n.navbar-nav li.loader {\n    margin: 12px 24px 0 6px;\n}\n\n.no-selection {\n  margin: 20px;\n}\n\n.contact-list {\n  overflow-y: auto;\n  border: 1px solid #ddd;\n  padding: 10px;\n}\n\n.panel {\n  margin: 20px;\n}\n\n.button-bar {\n  right: 0;\n  left: 0;\n  bottom: 0;\n  border-top: 1px solid #ddd;\n  background: white;\n}\n\n.button-bar > button {\n  float: right;\n  margin: 20px;\n}\n\nli.list-group-item {\n  list-style: none;\n}\n\nli.list-group-item > a {\n  text-decoration: none;\n}\n\nli.list-group-item.active > a {\n  color: white;\n}\n\n.settings-panel-btn {\n  margin: 5px;\n  margin-left: 15px;\n}\n\n.avatar-piece {\n  margin-bottom: 35px;\n}\n\n.centered {\n  text-align: center;\n}\n\n.friend-card {\n  margin-bottom: 5%;\n}\n\n.friend-name {\n  font-weight: bold;\n}\n\n.friend-status {\n  font-style: italic;\n  color: #aaa;\n}\n\n.call-buttons {\n  margin-top: 5px;\n}\n\n.option-title {\n  font-weight: bold;\n}\n\n.vertical-spacer {\n  padding-bottom: 10px;\n}\n"; });
+define('text!avatar-builder-category.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"row\"><h3 class=\"centered\">${title}</h3></div>\n    <div class=\"row\">\n        <div class=\"col-xs-2 text-center\">\n            <a route-href=\"route: avatarBuilderCategory; params.bind: {id: prevCategory}\">\n                <button class=\"btn center-block\">&lt;</button>\n            </a>\n        </div>\n\n        <div class=\"col-xs-8\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <div repeat.for=\"item of items\" class=\"col-xs-3 avatar-piece\">\n                        <a class=\"text-center\">\n                            <img class=\"img center-block\" src=\"${item.imageUrl}\">\n                        </a>\n                    </div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"col-xs-2 text-center\">\n            <a route-href=\"route: avatarBuilderCategory; params.bind: {id: nextCategory}\">\n                <button class=\"btn center-block\">&gt;</button>\n            </a>\n        </div>\n    </div>\n</template>"; });
 define('text!avatar-builder.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"row\">\n        <div class=\"col-xs-12\"><h1>Avatar Builder</h1></div>\n    </div>\n    <div class=\"row\">\n        <div class=\"col-md-3\">\n            <img class=\"img-responsive\" src=\"http://lorempixel.com/400/400/people/\">\n        </div>\n\n        <div class=\"col-md-9\">\n            <router-view></router-view>\n        </div>\n    </div>\n    <div class=\"row\">\n        <button class=\"btn settings-panel-btn\">Revert Changes</button>\n    </div>\n</template>"; });
-define('text!contact-detail.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-primary\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">Profile</h3>\n        </div>\n        <div class=\"panel-body\">\n            <form role=\"form\" class=\"form-horizontal\">\n                <div class=\"form-group\">\n                    <label class=\"col-sm-2 control-label\">First Name</label>\n                    <div class=\"col-sm-10\">\n                        <input type=\"text\" placeholder=\"first name\" class=\"form-control\" value.bind=\"contact.firstName\">\n                    </div>\n                </div>\n\n                <div class=\"form-group\">\n                    <label class=\"col-sm-2 control-label\">Last Name</label>\n                    <div class=\"col-sm-10\">\n                        <input type=\"text\" placeholder=\"last name\" class=\"form-control\" value.bind=\"contact.lastName\">\n                    </div>\n                </div>\n\n                <div class=\"form-group\">\n                    <label class=\"col-sm-2 control-label\">Email</label>\n                    <div class=\"col-sm-10\">\n                        <input type=\"text\" placeholder=\"email\" class=\"form-control\" value.bind=\"contact.email\">\n                    </div>\n                </div>\n\n                <div class=\"form-group\">\n                    <label class=\"col-sm-2 control-label\">Phone Number</label>\n                    <div class=\"col-sm-10\">\n                        <input type=\"text\" placeholder=\"phone number\" class=\"form-control\" value.bind=\"contact.phoneNumber\">\n                    </div>\n                </div>\n            </form>\n        </div>\n    </div>\n\n    <div class=\"button-bar\">\n        <button class=\"btn btn-success\" click.delegate=\"save()\" disabled.bind=\"!canSave\">Save</button>\n    </div>\n</template>"; });
-define('text!contact-list.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"contact-list\">\n        <ul class=\"list-group\">\n            <li repeat.for=\"contact of contacts\" class=\"list-group-item ${contact.id === $parent.selectedId ? 'active' : ''}\">\n                <a route-href=\"route: contacts; params.bind: {id:contact.id}\" click.delegate=\"$parent.select(contact)\">\n                    <h4 class=\"list-group-item-heading\">${contact.firstName} ${contact.lastName}</h4>\n                    <p class=\"list-group-item-text\">${contact.email}</p>\n                </a>\n            </li>\n        </ul>\n    </div>\n</template>"; });
 define('text!friend-list.html', ['module'], function(module) { module.exports = "<template>\n    <h2>Friends</h2>\n    <div class=\"panel panel-primary\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">\n                <a data-toggle=\"collapse\" href=\"#available-friends-panel\">Available</a>\n            </h3>\n        </div>\n        <div class=\"panel-collapse collapse in\" id=\"available-friends-panel\">\n            <div class=\"panel-body\">\n                <div class=\"row friend-list container-fluid\">\n                    <div repeat.for=\"friend of friends\">\n                        <friend-card user-id.bind=\"friend.id\" display-name.bind=\"friend.name\" status.bind=\"friend.status\" profile-image.bind=\"friend.profileImage\" show-friends=\"available\"></friend-card>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h3 class=\"panel-title\">\n                <a data-toggle=\"collapse\" href=\"#unavailable-friends-panel\">Offline</a>\n            </h3>\n        </div>\n        <div class=\"panel-collapse collapse\" id=\"unavailable-friends-panel\">\n            <div class=\"panel-body\">\n                <div class=\"row friend-list container-fluid\">\n                    <div repeat.for=\"friend of friends\">\n                        <friend-card user-id.bind=\"friend.id\" display-name.bind=\"friend.name\" status.bind=\"friend.status\" profile-image.bind=\"friend.profileImage\" show-friends=\"unavailable\"></friend-card>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n</template>"; });
 define('text!no-selection.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"no-selection text-center\">\n        <h2>${message}</h2>\n    </div>\n</template>"; });
-define('text!settings.html', ['module'], function(module) { module.exports = "<template>\n    <h1>Settings</h1>\n\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h2 class=\"panel-title\">Audio</h2>\n        </div>\n        <div class=\"panel-body\">\n            <div class=\"row\">\n                <button class=\"btn btn-default settings-panel-btn\">Select Microphone</button>\n            </div>\n            <div class=\"row\">\n                <button class=\"btn btn-default settings-panel-btn\">Select Speaker</button>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h2 class=\"panel-title\">General</h2>\n        </div>\n        <div class=\"panel-body\">\n            <div class=\"input-group\">\n                <span class=\"input-group-addon\">\n                    <input type=\"checkbox\" id=\"share-app-status\">\n                </span>\n                <label class=\"form-control\" for=\"share-app-status\">Share what I'm doing with others</label>\n            </div>\n        </div>\n    </div>\n</template>"; });
-define('text!resources/elements/friend-card.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"friend-card col-sm-3 ${isVisible ? '' : 'hidden'}\">\n        <div class=\"row\">\n            <div class=\"col-xs-12 text-center\"><span class=\"friend-name\">${displayName}</span></div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col-xs-12 text-center\"><span class=\"friend-status\">${status}</span></div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col-xs-12\"><img class=\"img center-block\" src=\"${profileImage}\"></div>\n        </div>\n        <div class=\"row ${areButtonsVisible ? '' : 'hidden'}\">\n            <div class=\"col-sm-2\"></div>\n            <div class=\"col-sm-4\">\n                <button class=\"btn center-block btn-primary call-button\">\n                    <span class=\"glyphicon glyphicon-earphone\"></span>\n                </button>\n            </div>\n            <div class=\"col-sm-4\">\n                <button class=\"btn center-block btn-primary call-button\">\n                    <span class=\"glyphicon glyphicon-facetime-video\"></span>\n                </button>\n            </div>\n            <div class=\"col-sm-2\"></div>\n        </div>\n    </div>\n</template>"; });
+define('text!settings.html', ['module'], function(module) { module.exports = "<template>\n    <h1>Settings</h1>\n\n    <router-view></router-view>\n</template>"; });
+define('text!settings/main.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h2 class=\"panel-title\">Audio</h2>\n        </div>\n        <div class=\"panel-body\">\n            <div class=\"row\">\n                <div class=\"col-xs-12\">\n                    <div class=\"input-group\">\n                        <span class=\"form-control\"><span class=\"option-title\">Speaker:</span> ${speakerName}</span>\n                        <span class=\"input-group-btn\">\n                            <a route-href=\"route:speakerSetup\" class=\"btn btn-default\">Setup...</a>\n                        </span>\n                    </div>\n                </div>\n            </div>\n            <div class=\"row vertical-spacer\"></div>\n            <div class=\"row\">\n                <div class=\"col-xs-12\">\n                    <div class=\"input-group\">\n                        <span class=\"form-control\"><span class=\"option-title\">Microphone:</span> ${microphoneName}</span>\n                        <span class=\"input-group-btn\">\n                            <a route-href=\"route:microphoneSetup\" class=\"btn btn-default\">Setup...</a>\n                        </span>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h2 class=\"panel-title\">General</h2>\n        </div>\n        <div class=\"panel-body\">\n            <div class=\"input-group\">\n                <span class=\"input-group-addon\">\n                    <input type=\"checkbox\" id=\"share-app-status\">\n                </span>\n                <label class=\"form-control\" for=\"share-app-status\">Share what I'm doing with others</label>\n            </div>\n        </div>\n    </div>\n</template>"; });
+define('text!settings/speaker-setup.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h2 class=\"panel-title\">Speaker Setup</h2>\n        </div>\n        <div class=\"panel-body\">\n            <div class=\"row\"><div class=\"col-xs-12\">\n                Please listen to the headphones you intend to use and ensure you can hear audio coming from the left and right ears.\n            </div></div>\n            <div class=\"row\"><div class=\"col-xs-12\">\n                <h4>${speakerName}</h4>\n            </div></div>\n            <div class=\"row\"><div class=\"col-xs-12\">\n                <div class=\"progress\">\n                    <div class=\"progress-bar\" role=\"progressbar\" style=\"width: ${playPercent}%\"></div>\n                </div>\n            </div></div>\n            <div class=\"row\"><div class=\"col-xs-12\">\n                <a class=\"btn btn-primary\" route-href=\"route: main\">Use this audio device</a>\n                <a class=\"btn btn-default\" route-href=\"route: main\">Try next audio device</a>\n            </div></div>\n        </div>\n    </div>\n</template>"; });
+define('text!resources/elements/friend-card.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"friend-card col-sm-3 ${isVisible ? '' : 'hidden'}\">\n        <div class=\"row\">\n            <div class=\"col-xs-12 text-center\"><span class=\"friend-name\">${displayName}</span></div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col-xs-12 text-center\"><span class=\"friend-status\">${status}</span></div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col-xs-12\"><img class=\"img center-block\" width=\"64\" src=\"${profileImage}\"></div>\n        </div>\n        <div class=\"row ${areButtonsVisible ? '' : 'hidden'}\">\n            <div class=\"col-xs-3\"></div>\n            <div class=\"col-xs-7\">\n                <div class=\"btn-group call-buttons\">\n                    <button class=\"btn btn-primary\">\n                        <span class=\"glyphicon glyphicon-earphone\"></span>\n                    </button>\n                    <button class=\"btn btn-primary\">\n                        <span class=\"glyphicon glyphicon-facetime-video\"></span>\n                    </button>\n                </div>\n            </div>\n            <div class=\"col-xs-2\"></div>\n        </div>\n    </div>\n</template>"; });
+define('text!settings/microphone-setup.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"panel panel-default\">\n        <div class=\"panel-heading\">\n            <h2 class=\"panel-title\">Microphone Setup</h2>\n        </div>\n        <div class=\"panel-body\">\n            <div class=\"row\"><div class=\"col-xs-12\">\n                Please speak at a normal volume into the microphone you intend to use. The green bar should move noticeably.\n            </div></div>\n            <div class=\"row\"><div class=\"col-xs-12\">\n                <h4>${microphoneName}</h4>\n            </div></div>\n            <div class=\"row\"><div class=\"col-xs-12\">\n                <div class=\"progress\">\n                    <div class=\"progress-bar\" role=\"progressbar\" style=\"width: ${volumePercent}%\"></div>\n                </div>\n            </div></div>\n            <div class=\"row\"><div class=\"col-xs-12\">\n                <a class=\"btn btn-primary\" route-href=\"route: main\">Use this audio device</a>\n                <a class=\"btn btn-default\" route-href=\"route: main\">Try next audio device</a>\n            </div></div>\n        </div>\n    </div>\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map
