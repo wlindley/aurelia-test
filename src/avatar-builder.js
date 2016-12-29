@@ -8,15 +8,12 @@ export class AvatarBuilder {
     }
 
     configureRouter(config, router) {
+        let defaultCategory = this.api.avatarBuilderCategories[0];
         config.title = 'Avatar Builder';
         config.map([
-            {route: '', moduleId: 'no-selection', name: 'noSelection', nav: false},
-            {route: 'category/:id', moduleId: 'avatar-builder-category', name: 'avatarBuilderCategory', nav: false}
+            {route: '', redirect: 'category/' + defaultCategory},
+            {route: 'category/:id', moduleId: 'avatar-builder-category', name: 'avatarBuilderCategory'}
         ]);
         this.router = router;
-    }
-
-    created() {
-        this.router.navigateToRoute('avatarBuilderCategory', {id: this.api.avatarBuilderCategories[0]});
     }
 }

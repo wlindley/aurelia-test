@@ -16,12 +16,6 @@ a:focus {
   margin: 20px;
 }
 
-.contact-list {
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 10px;
-}
-
 .panel {
   margin: 20px;
 }
@@ -57,11 +51,7 @@ li.list-group-item.active > a {
 }
 
 .avatar-piece {
-  margin-bottom: 35px;
-}
-
-.centered {
-  text-align: center;
+  margin-bottom: 5%;
 }
 
 .friend-card {
@@ -74,7 +64,6 @@ li.list-group-item.active > a {
 
 .friend-status {
   font-style: italic;
-  color: #aaa;
 }
 
 .call-buttons {
@@ -87,4 +76,13 @@ li.list-group-item.active > a {
 
 .vertical-spacer {
   padding-bottom: 10px;
+}
+
+.avatar-builder-category {
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.avatar-preview {
+  margin-top: 55px;
 }

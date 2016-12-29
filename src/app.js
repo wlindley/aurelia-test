@@ -6,7 +6,6 @@ export class App {
     static inject() { return [EventAggregator, PlutoAPI]; }
 
     constructor(ea, plutoApi) {
-        this._currentState = '';
         this.plutoApi = plutoApi;
         this.username = "";
         ea.subscribe(UserLoggedIn, msg => this.username = msg.username);
@@ -24,16 +23,9 @@ export class App {
         this.router = router;
     }
 
-    get currentState() {
-        return this._currentState;
-    }
-
-    set currentState(value) {
-        this._currentState = value;
-    }
-
-    changeState(nextState) {
-        this.currentState = nextState;
-        return true;
+    get currentRoute() {
+        if (null === this.router.currentInstruction)
+            return 'friendList';
+        return this.router.currentInstruction.config.name;
     }
 }

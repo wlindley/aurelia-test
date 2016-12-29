@@ -10,9 +10,9 @@
         <span class="username"> - ${username}</span>
       </div>
       <ul class="nav navbar-nav">
-        <li class.bind="currentState === 'avatarBuilder' ? 'active' : ''"><a route-href="route: avatarBuilder" click.delegate="changeState('avatarBuilder')">Avatar Builder</a></li>
-        <li class.bind="currentState === 'settings' ? 'active' : ''"><a route-href="route: settings" click.delegate="changeState('settings')">Settings</a></li>
-        <li class.bind="currentState === 'friendList' ? 'active' : ''"><a route-href="route: friendList" click.delegate="changeState('friendList')">Friends</a></li>
+        <li class.bind="currentRoute === 'avatarBuilder' ? 'active' : ''"><a route-href="route: avatarBuilder">Avatar Builder</a></li>
+        <li class.bind="currentRoute === 'settings' ? 'active' : ''"><a route-href="route: settings">Settings</a></li>
+        <li class.bind="currentRoute === 'friendList' ? 'active' : ''"><a route-href="route: friendList">Friends</a></li>
       </ul>
     </div>
   </nav>
